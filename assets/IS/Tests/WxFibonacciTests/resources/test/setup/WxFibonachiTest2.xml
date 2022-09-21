@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webMethodsTestSuite description="Auto Generated from Template" name="TS_WxFibonachiTest2.xml">
+    <webMethodsTestCase description="Generate a Test Wizard" name="TC_getNextNumber">
+        <service folder="WxFibonacci.services" name="getNextNumber">
+            <input>
+                <file filename="resources/test/setup/WxFibonacci_services_getNextNumber_input.xml"/>
+            </input>
+            <expected>
+                <file filename="resources/test/setup/WxFibonacci_services_getNextNumber_output.xml"/>
+            </expected>
+        </service>
+    </webMethodsTestCase>
+</webMethodsTestSuite>
