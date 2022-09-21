@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<IDataXMLCoder version="1.0">
+  <record javaclass="com.wm.util.Values">
+    <value name="fibonachiNumber">5957444661174968386</value>
+  </record>
+</IDataXMLCoder>

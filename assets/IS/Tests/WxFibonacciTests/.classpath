@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry including="src" kind="src" path=""/>
+	<classpathentry kind="con" path="com.sag.gcs.wmtestsuite.runtime.WmTestSuiteContainer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/WxFibonacci"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
