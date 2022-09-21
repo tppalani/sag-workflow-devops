@@ -35,11 +35,7 @@ pipeline {
 
     agent { label 'webmethods' }
 
-    tools {
-        jdk "SoftwareAG_JDK"
-        ant "SofwareAG_ANT"
-    }
-
+   
     options {
         buildDiscarder(logRotator(numToKeepStr:'10'))
         disableConcurrentBuilds()
