@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project name="sagcibuild" default="buildDeployTest" basedir=".">
+	
+	<!-- load env variables into properties -->
+	<property environment="env"/>
+	<property name="SAG_CI_HOME" value="${env.SAG_CI_HOME}"/>
+	<property name="SAG_CI_DEPLOY_HOME" value="${env.SAG_CI_DEPLOY_HOME}"/>
+	<property name="projectName" value="${env.projectName}"/>
+	
+	<!-- set SAGHome from env properties -->
+	<property name="SAGHome" value="${env.SAG_HOME}"/>
+	<property name="SAGHome" value="${env.SAGHome}"/>
+
+	<!-- project.properties -->
+	<property file="project.properties"/>
+
+	<property name="workspace.dir" location="."/>
+
+	<!-- remap the VCS structure defined in project.properties to have absolute paths -->
+	<property name="isProjectsDir" location="${isPackages}"/>
+	<property name="isTestDir" location="${isTests}"/>
+	<property name="bpmProjectsDir" location="${bpmProjects}"/>
+	<property name="mwsProjectsDir" location="${mwsProjects}"/>
+	<property name="rulesProjectsDir" location="${rulesProjects}"/>
+	<property name="umProjectsDir" location="${umExport}"/>
+
+	<target name="buildDeployTest" depends="">
+		<ant dir="${SAG_CI_HOME}" antfile="${SAG_CI_HOME}/build.xml" target="buildDeployTest" inheritAll="true"/>
+	</target>
+
+	<target name="build" depends="">
+		<ant dir="${SAG_CI_HOME}" antfile="${SAG_CI_HOME}/build.xml" target="build" inheritAll="true"/>
+	</target>
+
+	<target name="deploy2test" depends="">
+		<ant dir="${SAG_CI_HOME}" antfile="${SAG_CI_HOME}/build.xml" target="deploy" inheritAll="true"/>
+	</target>
+
+	<target name="test" depends="">
+		<ant dir="${SAG_CI_HOME}" antfile="${SAG_CI_HOME}/build.xml" target="test" inheritAll="true"/>
+	</target>
+
+	<target name="deploy2target" depends="">
+		<ant dir="${SAG_CI_DEPLOY_HOME}" antfile="${SAG_CI_DEPLOY_HOME}/build.xml" target="deploy" inheritAll="true"/>
+	</target>
+</project>

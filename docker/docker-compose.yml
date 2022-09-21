@@ -1,0 +1,57 @@
+version: "3"
+
+networks:
+  sagdevops:
+
+services:
+  compile:
+    image: registry.docker.tests:5000/softwareag/abe:10.1
+    command: ant -DprojectName=${PROJECT_NAME} build
+    environment:
+      - EXIT_AFTER_COMMAND=true
+    volumes:
+      - ${WORKSPACE-.}:/workspace
+    networks: 
+      - sagdevops
+
+  deploy:
+    image: registry.docker.tests:5000/softwareag/deployer_licensed:10.1
+    command: ant -DprojectName=${PROJECT_NAME} deploy
+    environment:
+      - EXIT_AFTER_COMMAND=false
+    volumes:
+      - ${WORKSPACE-.}:/workspace
+    ports:
+      - "8094:5555"
+      - "8095:9999"
+    networks:
+      - sagdevops
+
+  unittests:
+    image: registry.docker.tests:5000/softwareag/wmtestsuite:10.1
+    command: ant -DprojectName=${PROJECT_NAME} test
+    environment:
+      - EXIT_AFTER_COMMAND=false
+    volumes:
+      - ${WORKSPACE-.}:/workspace
+    networks:
+      - sagdevops
+
+  testserver:
+    image: registry.docker.tests:5000/softwareag/msc_licensed:10.1
+    ports:
+      - "5555:5555"
+      - "9999:9999"
+    networks:
+      - sagdevops
+
+  wm_fibonacci:
+    image: registry.docker.tests:5000/softwareag/wmfibonacci:latest
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "5555:5555"
+      - "9999:9999"
+    networks:
+      - sagdevops

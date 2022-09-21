@@ -1,0 +1,78 @@
+def remote = [:]
+remote.name = "deployer"
+remote.host = "deployer1.sedemos-prod-stack5.clouddemo.saggov.local"
+remote.allowAnyHosts = true
+remote.user = 'saguser'
+remote.identity = 'SSH-Saguser'
+
+pipeline {
+    agent any
+
+    //this should be given by jenkins at build time
+    environment {
+        PROJECT_NAME = "${env.JOB_NAME}"
+        PACKAGE_S3_BUCKET_REGION = "us-east-1"
+        PACKAGE_S3_BUCKET = "sedemos-prod-main"
+        PACKAGE_S3_BUCKET_PREFIX = "cicd_builds/${build_name}"
+    }
+
+    stages {
+        stage('Get Build') {
+            steps {
+	            echo "Download build from s3"
+	            withAWS(region:"${PACKAGE_S3_BUCKET_REGION}") {
+	                s3Download(
+	                    bucket:"${PACKAGE_S3_BUCKET}", 
+	                    path:"${PACKAGE_S3_BUCKET_PREFIX}/${build_name}-${build_version}.zip",
+                        file:"${build_name}-${build_version}.zip",
+	                    pathStyleAccessEnabled: true, 
+	                    payloadSigningEnabled: true,
+                        force: true
+	                )
+	            }
+            }
+        }
+        stage('Unzip') {
+            steps {
+	            echo "Unzip build"
+	            fileOperations(
+                    [
+                        fileUnZipOperation(
+                            filePath: "${build_name}-${build_version}.zip", 
+                            targetLocation: "./"
+                        )
+                    ]
+                )
+            }
+        }
+
+        stage('Remote SSH') {
+            steps {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'sshSagUser', keyFileVariable: 'identity', passphraseVariable: '', usernameVariable: 'userName')]) {
+                        sshCommand remote: remote, command: "ls -lrt"
+                        sshCommand remote: remote, command: "for i in {1..5}; do echo -n \"Loop \$i \"; date ; sleep 1; done"
+                    }
+            }
+        }
+
+        stage('SSH transfer2') {
+            steps {
+                echo "Copying file ${env.WORKSPACE}/${build_name}-${build_version}.zip"
+                sshPublisher(
+                    continueOnError: false, failOnError: true,
+                    publishers: [
+                        sshPublisherDesc(
+                            configName: "deployer",
+                            verbose: true,
+                            transfers: [
+                                sshTransfer(
+                                    sourceFiles: "${env.WORKSPACE}/${build_name}-${build_version}.zip",
+                                )
+                            ]
+                        )
+                    ]
+                )
+            }
+        }
+    }
+}

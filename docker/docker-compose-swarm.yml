@@ -1,0 +1,22 @@
+version: "3.0"
+
+networks:
+  sag-network:
+    external: true
+
+services:
+  wmfibonacci:
+    image: registry.docker.tests:5000/softwareag/wmfibonacci:latest
+    networks:
+      - sag-network
+    deploy:
+      replicas: 2
+      labels:
+        traefik.port: 5555
+        traefik.docker.network: "sag-network"
+        traefik.protocol: "http"
+        traefik.frontend.rule: "Host:wmfibonacci.docker.tests"
+        traefik.backend.loadbalancer.sticky: "true"
+        traefik.enable: "true"
+      restart_policy:
+        condition: any
